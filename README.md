@@ -1,10 +1,14 @@
+This is a fork from [evanw/socket.io-python](https://github.com/evanw/socket.io-python) and is currently upgraded to work with socket.io 0.9 (instead of the old 0.6 api).
+
+TODO: arbitrary events
+
 # A socket.io bridge for Python
 
 This gives Python users access to socket.io, a node.js library. This library provides simple and efficient bidirectional communication between browsers and servers over a message-oriented socket. Transport is normalized over various technologies including WebSockets, Flash sockets, and AJAX polling.
 
 ## Installation
 
-This bridge requires [node.js](http://nodejs.org) and [socket.io](http://socket.io). Install node.js and [npm](http://npmjs.org/), then run `npm install .` in this directory to install the correct version of socket.io (the newer versions have changed their API).
+This bridge requires [node.js](http://nodejs.org) and [socket.io](http://socket.io). Install node.js and [npm](http://npmjs.org/), then run `npm install .` in this directory to install the correct version of socket.io.
 
 ## Usage
 

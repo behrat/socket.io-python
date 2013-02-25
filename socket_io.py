@@ -6,7 +6,9 @@ provides simple and efficient bidirectional communication between browsers
 and servers over a message-oriented socket. Transport is normalized over
 various technologies including WebSockets, Flash sockets, and AJAX polling.
 
-For the latest source, visit https://github.com/evanw/socket.io-python
+For Evan Wallace's latest source, visit https://github.com/evanw/socket.io-python
+For the latest source, visit https://github.com/behrat/socket.io-python
+
 '''
 
 import os
@@ -21,12 +23,8 @@ import subprocess
 # UDP to allow for arbitrarily large packets.
 _js = '''
 var net = require('net');
-var http = require('http');
-var io = require('socket.io');
-
-// http server
-var server = http.createServer(function() {});
-server.listen(%d);
+var io = require('socket.io').listen(%d);
+io.set('log level', 1);
 
 // tcp connection to server
 var tcp = net.createConnection(%d, 'localhost');
@@ -46,28 +44,24 @@ tcp.addListener('data', function(data) {
     buffer += data.toString('utf8');
 });
 
-// socket.io connection to clients
-var socket = io.listen(server);
 function sendToServer(client, command, data) {
     data = JSON.stringify({
-        session: client.sessionId,
+        session: client.id,
         command: command,
         data: data,
-        address: client.connection.remoteAddress,
-        port: client.connection.remotePort
+        address: client.handshake.address.address,
+        port: client.handshake.address.port
     });
     tcp.write(data + '\0');
 }
 function sendToClient(json) {
     if (json.broadcast) {
-        for (var session in socket.clients) {
-            socket.clients[session].send(json.data);
-        }
-    } else if (json.session in socket.clients) {
-        socket.clients[json.session].send(json.data);
+        io.sockets.send(json.data);
+    } else if (json.session in io.sockets.sockets) {
+        io.sockets.sockets[json.session].send(json.data);
     }
 }
-socket.on('connection', function(client) {
+io.sockets.on('connection', function(client) {
     sendToServer(client, 'connect', null);
     client.on('message', function(data) {
         sendToServer(client, 'message', data);
